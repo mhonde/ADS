@@ -33,6 +33,9 @@ public class LoginPage extends BasePage	{
 	@FindBy( how = How.CSS, using ="body > div:nth-child(4) > div > div > h2")
 	WebElement wrongPasswordWindow;
 	
+	@FindBy( how = How.CSS, using ="#root > div > div > div > div > div.container > div > div > div.forgot-pwd > a:nth-child(1)")
+	WebElement forgotPasswordLink;
+	
 	public LoginPage(WebDriver driver) {
 		super(driver);
 	}
@@ -55,6 +58,11 @@ public class LoginPage extends BasePage	{
 			}
 	}
 
+	public ResetPage clickForgotPasswordLink() {
+		forgotPasswordLink.click();
+		 return PageFactory.initElements(driver, ResetPage.class);
+		
+	}
 
 }
 

@@ -86,6 +86,32 @@ public class ResetPasswordTest extends BaseTest {
 		
 		dashBoardPage.LogOut();
 	}
+	
+	@Test
+	public void ResetPasswordWithLast12thPwd() throws InterruptedException {
+		getWebUrl();
+		loginPage = registerPage.getLoginPageForExistingAcct();
+		dataSetup();
+		DashBoardPage dashBoardPage = loginPage.enterLoginDetails(dataProperties.getProperty("emailId"),
+										dataProperties.getProperty("passWord"));
+		if(dashBoardPage != null) {
+			
+		//	Assert.assertTrue("Successfully login", driver.getPageSource().contains("MY SERVICES"));
+			logger.info("User able to login to account to reset password" );
+		}
+		System.out.println("Current password is  " + dataProperties.getProperty("passWord"));
+		boolean isSuccessful =dashBoardPage.ResetWithPreviousPassWord(dataProperties.getProperty("passWord"), 1);
+	
+		if( !isSuccessful ) {
+			logger.info("New password needs to be different from the previous 12 passwords. message is displayed");
+		}else {
+			logger.info("New password needs to be different from the previous 12 passwords message did not displayed, test failed");
+			Assert.assertFalse(false);
+		}
+		dashBoardPage.LogOut();
+	}
+	
+	
 	@After
 	public void closeBrowser() {
 		driver.close();

@@ -1,8 +1,11 @@
 package com.ads.pom.page;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -48,6 +51,11 @@ public class DashBoardPage extends BasePage	{
 	@FindBy( how = How.CSS, using ="#root > div > div > div > div > div > nav > div.right > div.nav-menu-right.desktop > div > div.drop-content > div > p")
 	WebElement logOut;
 	
+	@FindBy( how = How.CSS, using ="body > div:nth-child(4) > div > div > p")
+	WebElement PreviousPwdMatchMsg;
+	
+	@FindBy( how = How.CSS, using ="body > div:nth-child(4) > div > div > button.btn.btn-primary")
+	WebElement Dismiss;
 	
 	public String ResetPassWord(String passWord) {
 		settings.click();
@@ -78,6 +86,36 @@ public class DashBoardPage extends BasePage	{
 		Thread.sleep(1000);
 		save.click();
 		return null;
+	}
+	
+	public boolean ResetWithPreviousPassWord(String passWord, int previousPwdNum) throws InterruptedException {
+		settings.click();
+		changePassword.click();
+		currentPassword.sendKeys(passWord);
+		int numbers =Integer.parseInt(passWord.substring(passWord.indexOf("@")+1)) ;
+		numbers = numbers-previousPwdNum;
+		String newPassWd = passWord.substring(0, passWord.indexOf("@")+1) + numbers;
+		newPassword.sendKeys(newPassWd);
+		confirmPassword.sendKeys(newPassWd);
+		Thread.sleep(1000);
+		save.click();
+		String subWindowHandler = null;
+		Set<String> handles = driver.getWindowHandles(); // get all window handles
+		Iterator<String> iterator = handles.iterator();
+		while (iterator.hasNext()){
+		    subWindowHandler = iterator.next();
+		}
+		driver.switchTo().window(subWindowHandler);
+		try {
+		if ( PreviousPwdMatchMsg.getText().contains("New password needs to be different from the previous 12 passwords.")) {
+			Dismiss.click();
+			return true;
+		}else {
+			return false;
+		} }catch (Exception e) {
+			return false;
+		}
+		
 	}
 	
 	public void LogOut() {

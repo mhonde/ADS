@@ -12,6 +12,7 @@ import com.ads.common.tests.BaseTest;
 import com.ads.pom.page.DashBoardPage;
 import com.ads.pom.page.LoginPage;
 import com.ads.pom.page.RegisterPage;
+import com.ads.pom.page.ResetPage;
 public class LoginTest extends BaseTest {
 
 	LoginPage loginPage =null;
@@ -49,7 +50,6 @@ public class LoginTest extends BaseTest {
 		DashBoardPage dashBoardPage = loginPage.enterLoginDetails(dataProperties.getProperty("emailId"),
 										"TestAutomation@123456");
 		
-		System.out.println("Current title " + driver.getTitle());
 		if ( dashBoardPage == null) {
 			Set<String> handles = driver.getWindowHandles(); // get all window handles
 			Iterator<String> iterator = handles.iterator();
@@ -66,6 +66,22 @@ public class LoginTest extends BaseTest {
 		}
 	}
 
+	@Test
+	public void forgotPassword() {
+		String subWindowHandler = null;
+		getWebUrl();
+		loginPage = registerPage.getLoginPageForExistingAcct();
+		dataSetup();
+		ResetPage resetPage = loginPage.clickForgotPasswordLink();
+		resetPage.sendEmailForPasswordReset(dataProperties.getProperty("emailId"));
+		
+	
+		if (driver.getPageSource().contains("Done, we've sent you an email with a link.")) {
+			
+			Assert.assertTrue("Password Reset link is send, check email", true);
+			logger.assertLog(true, "Password Reset link is send");
+		}
+	}
 
 	@After
 	public void closeBrowser() {
